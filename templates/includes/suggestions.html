@@ -1,0 +1,101 @@
+<div class="recommendations-container">
+  <div class="profile-container-content">
+    <div class="profile-image-container">
+      <img
+        class="main-image"
+        src={{user.image_url}}
+        alt="Image of a user with a story"
+      />
+    </div>
+    <div class="profile-username-suggested-container">
+      <div class="profile-username-container">{{user.username}}</div>
+    </div>
+  </div>
+  <h3 class="suggestions-banner">Suggestions for you:</h3>
+  <div class="recommendations-container-content">
+    <div class="recommendations-image-container">
+      <img
+        class="profile-image"
+        src={{suggestions[0].image_url}}
+        alt="Image of a user with a story"
+      />
+    </div>
+    <div class="recommendations-username-suggested-container">
+      <div class="recommendations-username-container">{{suggestions[0].username}}</div>
+      <div class="recommendations-suggested-container">Follows you</div>
+    </div>
+    <div class="recommendations-follow-container">
+      <button class="recommendations-follow-button">Follow</button>
+    </div>
+  </div>
+  <div class="recommendations-container-content">
+    <div class="recommendations-image-container">
+      <img
+        class="profile-image"
+        src={{suggestions[1].image_url}}
+        alt="Image of a user with a story"
+      />
+    </div>
+    <div class="recommendations-username-suggested-container">
+      <div class="recommendations-username-container">{{suggestions[1].username}}</div>
+      <div class="recommendations-suggested-container">
+        Followed by shannon1989
+      </div>
+    </div>
+    <div class="recommendations-follow-container">
+      <button class="recommendations-follow-button">Follow</button>
+    </div>
+  </div>
+  <div class="recommendations-container-content">
+    <div class="recommendations-image-container">
+      <img
+        class="profile-image"
+        src={{suggestions[2].image_url}}
+        alt="Image of a user with a story"
+      />
+    </div>
+    <div class="recommendations-username-suggested-container">
+      <div class="recommendations-username-container">{{suggestions[2].username}}</div>
+      <div class="recommendations-suggested-container">
+        Followed by shannon1989
+      </div>
+    </div>
+    <div class="recommendations-follow-container">
+      <button class="recommendations-follow-button">Follow</button>
+    </div>
+  </div>
+  <div class="recommendations-container-content">
+    <div class="recommendations-image-container">
+      <img
+        class="profile-image"
+        src={{suggestions[3].image_url}}
+        alt="Image of a user with a story"
+      />
+    </div>
+    <div class="recommendations-username-suggested-container">
+      <div class="recommendations-username-container">{{suggestions[3].username}}</div>
+      <div class="recommendations-suggested-container">
+        Followed by markus_aldridge
+      </div>
+    </div>
+    <div class="recommendations-follow-container">
+      <button class="recommendations-follow-button">Follow</button>
+    </div>
+  </div>
+  <div class="recommendations-container-content">
+    <div class="recommendations-image-container">
+      <img
+        class="profile-image"
+        src={{suggestions[4].image_url}}
+        alt="Image of a user with a story"
+      />
+    </div>
+    <div class="recommendations-username-suggested-container">
+      <div class="recommendations-username-container">{{suggestions[4].username}}</div>
+      <div class="recommendations-suggested-container">Follows you</div>
+    </div>
+    <div class="recommendations-follow-container">
+      <button class="recommendations-follow-button">Follow</button>
+    </div>
+  </div>
+</div>
