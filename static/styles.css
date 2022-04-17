@@ -1,0 +1,446 @@
+/* GLOBAL */
+
+html {
+  scroll-behavior: smooth;
+  background: rgb(231, 231, 231);
+  font-family: sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Comfortaa", cursive;
+}
+
+/* Navbar navbar */
+/* Entire navbar - making it look good */
+
+.navbar-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: auto;
+  width: 100%;
+}
+
+nav div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: flex-start;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  /* Transparent */
+  background-color: #ffffff;
+  filter: alpha(opacity=95);
+  /* going to show on top */
+  z-index: 0;
+}
+
+nav div ul {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+}
+
+nav div ul li a {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+/* Logo style */
+nav div h1 a {
+  color: rgb(152, 152, 152);
+  text-decoration: none;
+  transition: all 0.25s ease;
+  font-weight: 600;
+}
+
+nav div h1 a:hover {
+  color: black;
+}
+
+/* Links  */
+nav div ul li a {
+  color: rgb(152, 152, 152);
+  text-decoration: none;
+  transition: all 0.25s ease;
+  font-weight: 500;
+}
+
+nav div ul li a:hover {
+  color: black;
+}
+
+/* This is the other things */
+
+.container {
+  margin: auto;
+  margin-top: 80px;
+  width: 70%;
+  /* border: 1px solid black; */
+  /* Padding gall around */
+  padding: 10px;
+}
+
+/* Main content flex area */
+/* Main content flex area */
+/* Main content flex area */
+.content-flex {
+  display: flex;
+  margin-right: auto;
+  margin-left: auto;
+  justify-content: space-between;
+}
+
+.stories-cards-container {
+  flex-basis: 60%;
+  height: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  z-index: -1;
+}
+
+.recommendations-container {
+  position: sticky;
+  top: 70px;
+  flex-basis: 35.6%;
+  height: 600px;
+  background: rgba(255, 255, 255, 0);
+  /* internal padding */
+  padding: 10px;
+  /* shitty but works  */
+  margin-left: 10px;
+}
+
+/* Styling stories */
+/* Styling stories */
+/* Styling stories */
+.stories-container {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 5rem;
+  grid-gap: 1rem;
+  /* Same height as the stories from the top of the stories card container */
+  margin-bottom: 20px;
+}
+
+.stories-container-content {
+  display: grid;
+  grid-gap: 0.5rem;
+  margin: 0px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  /* zoom in transition */
+  transition: all 200ms ease-in;
+}
+
+.stories-container-content:hover {
+  transform: scale(1.02);
+}
+
+.image-container {
+  display: inline-block;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: radial-gradient(rgba(0, 0, 0, 0.15) 60%, transparent 0),
+    radial-gradient(white 65%, transparent 0),
+    linear-gradient(to top right, rgb(255, 172, 17), rgb(255, 54, 161));
+}
+
+.story-username-container {
+  font-size: small;
+}
+
+.profile-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  clip-path: circle(42%);
+}
+
+/* Recommendations area */
+/* Recommendations area */
+/* Recommendations area */
+
+/* PROFILE ABOVE SUGGESTIONS */
+.profile-container-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-start;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  /* no transitions here */
+}
+
+.profile-image-container {
+  display: inline-block;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+}
+
+.main-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  clip-path: circle(42%);
+}
+
+.profile-username-suggested-container {
+  margin-left: 0.25rem;
+  position: relative;
+  display: inline-block;
+}
+
+.profile-username-container {
+  font-size: large;
+}
+
+/* RECOMMENDATION AREA */
+
+.suggestions-banner {
+  color: rgb(90, 90, 90);
+  font-weight: 500;
+  margin-bottom: -10px !important; /* Shitty, but need the margin here to be smaller */
+}
+
+.recommendations-container {
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-rows: 4.4rem;
+  grid-gap: 0rem;
+  align-items: center;
+}
+
+.recommendations-container-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-start;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  /* no transitions here */
+}
+
+.recommendations-image-container {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+}
+
+.recommendations-username-suggested-container {
+  margin-left: 0.25rem;
+  position: relative;
+  display: inline-block;
+}
+
+.recommendations-username-container {
+  font-size: small;
+}
+
+.recommendations-suggested-container {
+  font-size: x-small;
+}
+
+.recommendations-follow-container {
+  margin-left: auto;
+}
+
+.recommendations-follow-button {
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(218, 179, 255);
+  padding: 8px 16px;
+  border-radius: 5%;
+  cursor: pointer;
+}
+
+/* Styling  main post area */
+/* Styling  main post area */
+/* Styling  main post area */
+.post {
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border: 1px solid #dfdfdf;
+}
+
+.info {
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 20px;
+}
+
+.username {
+  width: auto;
+  font-weight: 600;
+  color: #000;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.options {
+  height: 20px;
+  cursor: pointer;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+}
+
+.profile-pic {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  background: none;
+}
+
+.info .profile-pic img {
+  border: none;
+}
+
+.post-image {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+}
+
+.post-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.likes {
+  display: flex;
+  align-items: flex-start;
+  font-weight: bold;
+  margin-bottom: -5px;
+}
+
+.description {
+  margin: 10px 0;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.description span {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.comment {
+  margin: 10px 0;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.comment span {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.post-time {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 12px;
+}
+
+.comment-wrapper {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.icon {
+  height: 30px;
+}
+
+.comment-box {
+  margin-left: 0rem;
+  width: 80%;
+  height: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+.comment-btn {
+  width: 70px;
+  height: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: rgb(0, 162, 255);
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.reaction-wrapper {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+
+.icon {
+  height: 25px;
+  margin: 0;
+  margin-right: 20px;
+}
+
+.icon.save {
+  margin-left: auto;
+  margin-right: 0rem;
+}
+
+/* Hiding recommendations container, and re-sizing everything */
+/* Hiding recommendations container, and re-sizing everything */
+/* Hiding recommendations container, and re-sizing everything */
+
+@media screen and (max-width: 960px) {
+  .recommendations-container {
+    display: none;
+  }
+
+  .stories-cards-container {
+    flex-basis: 100%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    width: 95%;
+  }
+
+  nav div {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  nav div h1 a {
+    font-size: smaller;
+  }
+}
