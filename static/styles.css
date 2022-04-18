@@ -52,10 +52,8 @@ nav div ul li a {
 
 /* Logo style */
 nav div h1 a {
-  color: rgb(152, 152, 152);
+  color: rgb(0, 0, 0);
   text-decoration: none;
-  transition: all 0.25s ease;
-  font-weight: 600;
 }
 
 nav div h1 a:hover {
@@ -64,7 +62,7 @@ nav div h1 a:hover {
 
 /* Links  */
 nav div ul li a {
-  color: rgb(152, 152, 152);
+  color: black;
   text-decoration: none;
   transition: all 0.25s ease;
   font-weight: 500;
