@@ -1,0 +1,14 @@
+<div class="stories-container">
+  {%for i in range(stories|length)%}
+  <div class="stories-container-content">
+    <div class="image-container">
+      <img
+        class="profile-image"
+        src={{stories[i].user.image_url}}
+        alt="Image of a user with a story"
+      />
+    </div>
+    <div class="story-username-container">{{stories[i].user.username}}</div>
+  </div>
+  {%endfor%}
+</div>
