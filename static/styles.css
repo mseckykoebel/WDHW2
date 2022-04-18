@@ -271,6 +271,8 @@ nav div ul li a:hover {
 /* Styling  main post area */
 /* Styling  main post area */
 .post {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   width: 100%;
   height: auto;
   background: #fff;
@@ -361,6 +363,12 @@ nav div ul li a:hover {
 .post-time {
   color: rgba(0, 0, 0, 0.5);
   font-size: 12px;
+}
+
+.load-more {
+  color: rgba(0, 91, 194, 0.669);
+  font-size: 12px;
+  cursor: pointer;
 }
 
 .comment-wrapper {
