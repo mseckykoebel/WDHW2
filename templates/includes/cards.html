@@ -10,7 +10,7 @@
           <img
             class="profile-pic"
             src="{{posts[i].user.profile_url}}"
-            alt="The profile image of the poster"
+            alt="The profile image {{posts[i].user.username}}"
           />
         </div>
         <p class="username">{{posts[i].user.username}}</p>
@@ -24,7 +24,7 @@
     <img
       src="{{posts[i].user.image_url}}"
       class="post-image"
-      alt="Poster's posted image"
+      alt="The image that {{posts[i].user.username}} posted"
     />
     <div class="post-content">
       <div class="reaction-wrapper">
@@ -62,7 +62,9 @@
           {{posts[i].comments[0].text}}
         </p>
         <!-- Button for commenting-->
-        <a class="load-more" href="#">Load {{posts[i].comments|length - 1}} more</a>
+        <a class="load-more" href="#"
+          >Load {{posts[i].comments|length - 1}} more</a
+        >
         <!-- POST TIME -->
         <p class="post-time">2 minutes ago</p>
       </div>
@@ -81,10 +83,28 @@
         <img
           src="https://img.icons8.com/fluency-systems-regular/344/happy.png"
           class="icon"
-          alt=""
+          alt="Smiling face for selecting an emoji to comment on this post"
         />
-        <input type="text" class="comment-box" placeholder="Add a comment..." />
-        <button class="comment-btn">Post</button>
+        <label for="comment_{{posts[i].user.username}}" hidden
+          >Write out a comment of this post by {{posts[i].user.username}}</label
+        >
+        <input
+          id="comment_{{posts[i].user.username}}"
+          type="text"
+          class="comment-box"
+          placeholder="Add a comment..."
+          name="comment_{{posts[i].user.username}}"
+        />
+        <label for="post_{{posts[i].user.username}}" hidden
+          >Post this comment to {{posts[i].user.username}}</label
+        >
+        <button
+          id="post_{{posts[i].user.username}}"
+          class="comment-btn"
+          name="post_{{posts[i].user.username}}"
+        >
+          Post
+        </button>
       </div>
     </div>
   </div>
