@@ -4,14 +4,14 @@
       <img
         class="main-image"
         src={{user.image_url}}
-        alt="Image of a user with a story"
+        alt="Profile of logged in user - click to go to their profile"
       />
     </div>
     <div class="profile-username-suggested-container">
       <div class="profile-username-container">{{user.username}}</div>
     </div>
   </div>
-  <h3 class="suggestions-banner">Suggestions for you:</h3>
+  <h1 class="suggestions-banner">Suggestions for you:</h1>
   {%for i in range(0, 5)%}
   <div class="recommendations-container-content">
     <div class="recommendations-image-container">

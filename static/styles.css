@@ -210,6 +210,7 @@ nav div ul li a:hover {
 .suggestions-banner {
   color: rgb(90, 90, 90);
   font-weight: 500;
+  font-size: larger;
   margin-bottom: -10px !important; /* Shitty, but need the margin here to be smaller */
 }
 
@@ -240,17 +241,21 @@ nav div ul li a:hover {
 }
 
 .recommendations-username-suggested-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   margin-left: 0.25rem;
   position: relative;
   display: inline-block;
+  
 }
 
 .recommendations-username-container {
-  font-size: small;
+  font-size: medium;
 }
 
 .recommendations-suggested-container {
-  font-size: x-small;
+  font-size: small;
 }
 
 .recommendations-follow-container {
