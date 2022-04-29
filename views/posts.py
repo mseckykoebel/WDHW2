@@ -61,7 +61,11 @@ class PostListEndpoint(Resource):
         body = request.get_json()
 
         if not body.get("image_url"):
-            return Response(json.dumps({"message": "image_url is required!"}), mimetype="application/json", status=400)
+            return Response(
+                json.dumps({"message": "image_url is required!"}),
+                mimetype="application/json",
+                status=400,
+            )
 
         print(body)
 
@@ -76,7 +80,9 @@ class PostListEndpoint(Resource):
         db.session.add(new_post)
         db.session.commit()
 
-        return Response(json.dumps(new_post.to_dict()), mimetype="application/json", status=201)
+        return Response(
+            json.dumps(new_post.to_dict()), mimetype="application/json", status=201
+        )
 
 
 class PostDetailEndpoint(Resource):
@@ -95,8 +101,24 @@ class PostDetailEndpoint(Resource):
 
     def get(self, id):
         # get the post based on the id
-        print(id)
-        return Response(json.dumps({"id": id}), mimetype="application/json", status=200)
+        if not Post.query.get(id):
+            return Response(
+                json.dumps({"message": "id={0} is invalid!"}),
+                mimetype="application/json",
+                status=404,
+            )
+        # users we are connected to
+        post = Post.query.get(id)
+        user_ids = get_authorized_user_ids(self.current_user)
+        if post.user_id not in user_ids:
+            return Response(
+                json.dumps({"message": "id={0} is invalid!"}),
+                mimetype="application/json",
+                status=404,
+            )
+        return Response(
+            json.dumps(post.to_dict()), mimetype="application/json", status=200
+        )
 
 
 def initialize_routes(api):

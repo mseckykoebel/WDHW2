@@ -283,10 +283,10 @@ if __name__ == "__main__":
             # TestPostListEndpoint(
             #     "test_posts_get_bad_limit_argument_handled"
             # ),  # get (list view)
-            TestPostListEndpoint("test_posts_get_is_authorized"),  # get (list view)
-            TestPostListEndpoint("test_post_post"),  # post (create)
-            TestPostListEndpoint("test_post_post_image_only"),  # post (create)
-            TestPostListEndpoint("test_post_post_bad_data_400_error"),  # post (create)
+            # TestPostListEndpoint("test_posts_get_is_authorized"),  # get (list view)
+            # TestPostListEndpoint("test_post_post"),  # post (create)
+            # TestPostListEndpoint("test_post_post_image_only"),  # post (create)
+            # TestPostListEndpoint("test_post_post_bad_data_400_error"),  # post (create)
             # Detail Endpoint Tests
             # TestPostDetailEndpoint(
             #     "test_post_patch_correct_data_200"
@@ -305,14 +305,14 @@ if __name__ == "__main__":
             # TestPostDetailEndpoint("test_post_delete_invalid_id_404"),  # delete
             # TestPostDetailEndpoint("test_post_delete_id_does_not_exist_404"),  # delete
             # TestPostDetailEndpoint("test_post_delete_unauthorized_id_404"),  # delete
-            # TestPostDetailEndpoint("test_post_get"),  # get (individual)
-            # TestPostDetailEndpoint("test_post_get_invalid_id_404"),  # get (individual)
-            # TestPostDetailEndpoint(
-            #     "test_post_get_id_does_not_exist_404"
-            # ),  # get (individual)
-            # TestPostDetailEndpoint(
-            #     "test_post_get_unauthorized_id_404"
-            # ),  # get (individual)
+            TestPostDetailEndpoint("test_post_get"),  # get (individual)
+            TestPostDetailEndpoint("test_post_get_invalid_id_404"),  # get (individual)
+            TestPostDetailEndpoint(
+                "test_post_get_id_does_not_exist_404"
+            ),  # get (individual)
+            TestPostDetailEndpoint(
+                "test_post_get_unauthorized_id_404"
+            ),  # get (individual)
         ]
     )
 
