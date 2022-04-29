@@ -89,15 +89,67 @@ class PostDetailEndpoint(Resource):
     def __init__(self, current_user):
         self.current_user = current_user
 
+    # update the post based on this
     def patch(self, id):
         # update post based on the data posted in the body
         body = request.get_json()
         print(body)
-        return Response(json.dumps({}), mimetype="application/json", status=200)
+
+        # get the post from the db
+        post = Post.query.get(id)
+        if not post:
+            return Response(
+                json.dumps({"message": "id={0} is invalid!"}),
+                mimetype="application/json",
+                status=404,
+            )
+        # check to see if we are one of the authorized users to do this
+        user_ids = get_authorized_user_ids(self.current_user)
+        if post.user_id not in user_ids:
+            return Response(
+                json.dumps({"message": "id={0} is invalid!"}),
+                mimetype="application/json",
+                status=404,
+            )
+        # set the new value
+        if body.get("image_url"):
+            post.image_url = body.get("image_url")
+        if body.get("caption"):
+            post.caption = body.get("caption")
+        if body.get("alt_text"):
+            post.alt_text = body.get("alt_text")
+        # commit the post back to the db
+        db.session.commit()
+        # and send back a 200
+        return Response(
+            json.dumps(post.to_dict()), mimetype="application/json", status=200
+        )
 
     def delete(self, id):
+        # get the post from the db
+        post = Post.query.get(id)
+        if not post:
+            return Response(
+                json.dumps({"message": "id={0} is invalid!"}),
+                mimetype="application/json",
+                status=404,
+            )
+        # check to see if we are one of the authorized users to do this
+        user_ids = get_authorized_user_ids(self.current_user)
+        if post.user_id not in user_ids:
+            return Response(
+                json.dumps({"message": "id={0} is invalid!"}),
+                mimetype="application/json",
+                status=404,
+            )
         # delete post where "id"=id
-        return Response(json.dumps({}), mimetype="application/json", status=200)
+        Post.query.filter_by(id=id).delete()
+        db.session.commit()
+        return Response(
+            json.dumps({"message": "post id={0} was successfully deleted".format(id)}),
+            mimetype="application/json",
+            status=200,
+        )
 
     def get(self, id):
         # get the post based on the id
