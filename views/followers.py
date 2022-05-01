@@ -25,7 +25,6 @@ class FollowerListEndpoint(Resource):
             .all()
         )
 
-        print(f"User id tuples: {user_ids_tuples}")
         user_ids = [id for (id,) in user_ids_tuples]
 
         # get the user info from the userIDs
