@@ -2,6 +2,10 @@ from flask import Response, request
 from flask_restful import Resource
 from models import Bookmark, db
 import json
+from tests.utils import get_authorized_user_ids
+
+# custom import
+from views import can_view_post
 
 
 class BookmarksListEndpoint(Resource):
@@ -26,7 +30,57 @@ class BookmarksListEndpoint(Resource):
         # create a new "bookmark" based on the data posted in the body
         body = request.get_json()
         print(body)
-        return Response(json.dumps({}), mimetype="application/json", status=201)
+
+        # try to cast to an int, and if it fails, error it out
+        try:
+            bookmark_id = int(body.get("post_id"))
+        except:
+            return Response(
+                json.dumps({"message": "post ID must be an integer!"}),
+                mimetype="application/json",
+                status=400,
+            )
+
+        # check and see if we're authorized to bookmark this post
+        # and, check and see if this ID is valid (cannot be too big)
+        print(f"Can the user view? {can_view_post(bookmark_id, self.current_user)}")
+        if not can_view_post(bookmark_id, self.current_user):
+            print("Cannot access this!")
+            return Response(
+                json.dumps({"message": "invalid post ID"}),
+                mimetype="application/json",
+                status=404,
+            )
+
+        # check to see if this bookmark has been catalogued in the past
+        # this is not working as of now
+        bookmark_exists = Bookmark.query.get(bookmark_id)
+        print(f"Bookmark exists: {bookmark_exists}")
+        if bookmark_exists is not None:
+            return Response(
+                json.dumps(
+                    {"message": "This post has already been bookmarked: rejected"}
+                ),
+                mimetype="application/json",
+                status=400,
+            )
+
+        if bookmark_id > 999:
+            return Response(
+                json.dumps({"message": "invalid post ID"}),
+                mimetype="application/json",
+                status=404,
+            )
+
+        # make the new bookmark
+        new_bookmark = Bookmark(user_id=self.current_user.id, post_id=bookmark_id)
+
+        db.session.add(new_bookmark)
+        db.session.commit()
+
+        return Response(
+            json.dumps(new_bookmark.to_dict()), mimetype="application/json", status=201
+        )
 
 
 class BookmarkDetailEndpoint(Resource):
@@ -35,8 +89,37 @@ class BookmarkDetailEndpoint(Resource):
 
     def delete(self, id):
         # delete "bookmark" record where "id"=id
-        print(id)
-        return Response(json.dumps({}), mimetype="application/json", status=200)
+
+        # check if the ID is invalid
+        if id > 999:
+            return Response(
+                json.dumps({"message": "id is invalid!"}),
+                mimetype="application/json",
+                status=404,
+            )
+
+        # see if we are authorized to edit this bookmark
+        bookmark = Bookmark.query.get(id)
+        print(f"This is the bookmark: {bookmark}")
+        user_ids = get_authorized_user_ids(self.current_user.id)
+        if bookmark.user_id not in user_ids:
+            return Response(
+                json.dumps({"message": "id is invalid!"}),
+                mimetype="application/json",
+                status=404,
+            )
+
+        # delete bookmark where "id"=id
+        Bookmark.query.filter_by(id=id).delete()
+        db.session.commit()
+
+        return Response(
+            json.dumps(
+                {"message": "bookmark id={0} was successfully deleted".format(id)}
+            ),
+            mimetype="application/json",
+            status=200,
+        )
 
 
 def initialize_routes(api):
