@@ -88,8 +88,6 @@ class BookmarkDetailEndpoint(Resource):
         self.current_user = current_user
 
     def delete(self, id):
-        # delete "bookmark" record where "id"=id
-
         # check if the ID is invalid
         if id > 999:
             return Response(

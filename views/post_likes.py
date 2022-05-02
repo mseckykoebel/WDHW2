@@ -2,6 +2,7 @@ from flask import Response, request
 from flask_restful import Resource
 from models import LikePost, db
 import json
+from tests.utils import get_authorized_user_ids
 
 from views import can_view_post
 
@@ -72,9 +73,36 @@ class PostLikesDetailEndpoint(Resource):
         self.current_user = current_user
 
     def delete(self, id):
-        # delete "like_post" where "id"=id
-        print(id)
-        return Response(json.dumps({}), mimetype="application/json", status=200)
+        # check if the ID is invalid
+        if id > 999:
+            return Response(
+                json.dumps({"message": "id is invalid!"}),
+                mimetype="application/json",
+                status=404,
+            )
+
+        # see if we are authorized to edit this bookmark
+        like_post = LikePost.query.get(id)
+        print(f"This is the like post: {like_post}")
+        user_ids = get_authorized_user_ids(self.current_user.id)
+        if like_post.user_id not in user_ids:
+            return Response(
+                json.dumps({"message": "id is invalid!"}),
+                mimetype="application/json",
+                status=404,
+            )
+
+        # delete bookmark where "id"=id
+        LikePost.query.filter_by(id=id).delete()
+        db.session.commit()
+
+        return Response(
+            json.dumps(
+                {"message": "liked post id={0} was successfully deleted".format(id)}
+            ),
+            mimetype="application/json",
+            status=200,
+        )
 
 
 def initialize_routes(api):
