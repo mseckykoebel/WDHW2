@@ -2,6 +2,7 @@ from flask import Response, request
 from flask_restful import Resource
 from models import User, Following, db
 from views import get_authorized_user_ids
+from random import sample
 import json
 
 
@@ -17,7 +18,8 @@ class SuggestionsListEndpoint(Resource):
         user_ids_tuples = (
             db.session.query(Following.following_id)
             .filter(
-                Following.user_id != self.current_user.id and Following.following_id != 12
+                Following.user_id != self.current_user.id
+                and Following.following_id != 12
             )
             .order_by(Following.following_id)
             .all()
@@ -28,10 +30,11 @@ class SuggestionsListEndpoint(Resource):
         # get all of the information from a list of userIds
         users = User.query.filter(User.id.in_(user_ids)).all()
         print(f"users: {users}")
-        users_json = []
-        for user in users:
-            users_json.append({"id": self.current_user.id, "suggested user": user.to_dict()})
-
+        users_json = [user.to_dict() for user in users]
+        for _ in range(0, len(users_json) - 7):
+            users_json.pop()
+        
+        print(len(users_json))
         return Response(json.dumps(users_json), mimetype="application/json", status=200)
 
 
