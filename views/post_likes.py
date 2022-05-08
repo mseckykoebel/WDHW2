@@ -37,35 +37,22 @@ class PostLikesListEndpoint(Resource):
                 status=404,
             )
 
-        # check to see if this bookmark has been catalogued in the past
-        # this is not working as of now
-        like_exists = LikePost.query.get(like_id)
-        print(f"Bookmark exists: {like_exists}")
-        if like_exists is not None:
+        try:
+            # make the new bookmark
+            new_like = LikePost(self.current_user.id, like_id)
+
+            db.session.add(new_like)
+            db.session.commit()
+
             return Response(
-                json.dumps(
-                    {"message": "This post has already been bookmarked: rejected"}
-                ),
+                json.dumps(new_like.to_dict()), mimetype="application/json", status=201
+            )
+        except:
+            return Response(
+                json.dumps({"message": "error posting"}),
                 mimetype="application/json",
                 status=400,
             )
-
-        if like_id > 999:
-            return Response(
-                json.dumps({"message": "invalid post ID"}),
-                mimetype="application/json",
-                status=404,
-            )
-
-        # make the new bookmark
-        new_like = LikePost(user_id=self.current_user.id, post_id=like_id)
-
-        db.session.add(new_like)
-        db.session.commit()
-
-        return Response(
-            json.dumps(new_like.to_dict()), mimetype="application/json", status=201
-        )
 
 
 class PostLikesDetailEndpoint(Resource):

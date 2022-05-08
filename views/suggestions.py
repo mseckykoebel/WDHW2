@@ -15,26 +15,14 @@ class SuggestionsListEndpoint(Resource):
         Suggestions for seven users that we're not following.
         Hard-coded limit to seven
         """
-        user_ids_tuples = (
-            db.session.query(Following.following_id)
-            .filter(
-                Following.user_id != self.current_user.id
-                and Following.following_id != 12
-            )
-            .order_by(Following.following_id)
-            .all()
-        )
-        print(f"User IDs: {user_ids_tuples}")
-        user_ids = [id for (id,) in user_ids_tuples]
+
+        user_ids = get_authorized_user_ids(self.current_user)
 
         # get all of the information from a list of userIds
-        users = User.query.filter(User.id.in_(user_ids)).all()
-        print(f"users: {users}")
+        users = User.query.filter(~User.id.in_(user_ids)).limit(7).all()
+        print(f"users: {users[0].to_dict()}")
         users_json = [user.to_dict() for user in users]
-        for _ in range(0, len(users_json) - 7):
-            users_json.pop()
-        
-        print(len(users_json))
+
         return Response(json.dumps(users_json), mimetype="application/json", status=200)
 
 

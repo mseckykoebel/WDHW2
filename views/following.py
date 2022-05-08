@@ -47,35 +47,32 @@ class FollowingListEndpoint(Resource):
                 status=400,
             )
 
-        if user_id > 999:
+        user = User.query.get(user_id)
+        if not user:
             return Response(
                 json.dumps({"message": "invalid user ID"}),
                 mimetype="application/json",
                 status=404,
             )
 
-        # check to see if this bookmark has been catalogued in the past
-        # this is not working as of now
-        following_exists = Following.query.filter_by(id=user_id).limit(1).all()
-        print(f"Following exists: {following_exists}")
-        if following_exists is not None:
+        try:
+            new_following = Following(self.current_user.id, user_id)
+            print(f"New following: {new_following}")
+            db.session.add(new_following)
+            db.session.commit()
+
             return Response(
-                json.dumps(
-                    {"message": "This user has already been followed - no change"}
-                ),
+                json.dumps(new_following.to_dict_following()),
+                mimetype="application/json",
+                status=201,
+            )
+
+        except:
+            return Response(
+                json.dumps({"message": "Error following user"}),
                 mimetype="application/json",
                 status=400,
             )
-
-        new_following = Following(user_id=self.current_user.id, following_id=user_id)
-        print(f"NEW FOLLOWING: {new_following}")
-
-        db.session.add(new_following)
-        db.session.commit()
-
-        return Response(
-            json.dumps(new_following.to_dict()), mimetype="application/json", status=201
-        )
 
 
 class FollowingDetailEndpoint(Resource):

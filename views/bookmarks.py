@@ -41,6 +41,14 @@ class BookmarksListEndpoint(Resource):
                 status=400,
             )
 
+        bookmark = Bookmark.query.get(bookmark_id)
+        if not bookmark:
+            return Response(
+                json.dumps({"message": "invalid bookmark ID"}),
+                mimetype="application/json",
+                status=404,
+            )
+
         # check and see if we're authorized to bookmark this post
         # and, check and see if this ID is valid (cannot be too big)
         print(f"Can the user view? {can_view_post(bookmark_id, self.current_user)}")
@@ -52,35 +60,26 @@ class BookmarksListEndpoint(Resource):
                 status=404,
             )
 
-        # check to see if this bookmark has been catalogued in the past
-        # this is not working as of now
-        bookmark_exists = Bookmark.query.get(bookmark_id)
-        print(f"Bookmark exists: {bookmark_exists}")
-        if bookmark_exists is not None:
+        try:
+
+            # make the new bookmark
+            new_bookmark = Bookmark(self.current_user.id, bookmark_id)
+
+            db.session.add(new_bookmark)
+            db.session.commit()
+
             return Response(
-                json.dumps(
-                    {"message": "This post has already been bookmarked: rejected"}
-                ),
+                json.dumps(new_bookmark.to_dict()),
+                mimetype="application/json",
+                status=201,
+            )
+
+        except:
+            return Response(
+                json.dumps({"message": "invalid bookmark ID"}),
                 mimetype="application/json",
                 status=400,
             )
-
-        if bookmark_id > 999:
-            return Response(
-                json.dumps({"message": "invalid post ID"}),
-                mimetype="application/json",
-                status=404,
-            )
-
-        # make the new bookmark
-        new_bookmark = Bookmark(user_id=self.current_user.id, post_id=bookmark_id)
-
-        db.session.add(new_bookmark)
-        db.session.commit()
-
-        return Response(
-            json.dumps(new_bookmark.to_dict()), mimetype="application/json", status=201
-        )
 
 
 class BookmarkDetailEndpoint(Resource):
