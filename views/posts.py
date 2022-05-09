@@ -53,7 +53,7 @@ class PostListEndpoint(Resource):
             )
         # posts = Post.query.limit(limit).all()
         posts = Post.query.filter(Post.user_id.in_(user_ids)).limit(limit).all()
-        posts_json = [post.to_dict() for post in posts]
+        posts_json = [post.to_dict(user=self.current_user) for post in posts]
         print(posts_json)
         return Response(json.dumps(posts_json), mimetype="application/json", status=200)
 
@@ -82,7 +82,7 @@ class PostListEndpoint(Resource):
         db.session.commit()
 
         return Response(
-            json.dumps(new_post.to_dict()), mimetype="application/json", status=201
+            json.dumps(new_post.to_dict(user=self.current_user)), mimetype="application/json", status=201
         )
 
 
