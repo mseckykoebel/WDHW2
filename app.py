@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+
 load_dotenv()
 from flask import Flask, request
 from flask_restful import Api
@@ -13,8 +14,8 @@ from views import initialize_routes, get_authorized_user_ids
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URL')
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False    
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DB_URL")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
 db.init_app(app)
@@ -29,27 +30,23 @@ with app.app_context():
 initialize_routes(api)
 
 # Server-side template for the homepage:
-@app.route('/')
+@app.route("/")
 def home():
-    return render_template(
-        'starter-client.html', 
-        user=app.current_user
-    )
+    return render_template("index.html", user=app.current_user)
 
 
-@app.route('/api')
-@app.route('/api/')
+@app.route("/api")
+@app.route("/api/")
 def api_docs():
     navigator = ApiNavigator(app.current_user)
     return render_template(
-        'api/api_docs.html', 
+        "api/api_docs.html",
         user=app.current_user,
         endpoints=navigator.get_endpoints(),
-        url_root=request.url_root[0:-1] # trim trailing slash
+        url_root=request.url_root[0:-1],  # trim trailing slash
     )
 
 
-
 # enables flask app to run using "python3 app.py"
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
