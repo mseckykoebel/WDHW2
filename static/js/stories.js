@@ -18,7 +18,6 @@ const displayStories = () => {
   fetch("/api/stories")
     .then((response) => response.json())
     .then((stories) => {
-      console.log("Stories: ", stories);
       const html = stories.map(story2Html).join("\n");
       document.querySelector(".stories-container").innerHTML = html;
     });
