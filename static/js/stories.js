@@ -1,15 +1,15 @@
 const story2Html = (story) => {
   return `
-      <div class="stories-container-content">
-        <div class="image-container">
-          <img
-            class="profile-image"
-            src="${story.user.thumb_url}"
-            alt="${story.user.username}'s story"
-          />
-        </div>
-        <div class="story-username-container">${story.user.username}</div>
+    <div class="stories-container-content">
+      <div class="image-container">
+        <img
+          class="profile-image"
+          src="${story.user.thumb_url}"
+          alt="${story.user.username}'s story"
+        />
       </div>
+      <div class="story-username-container">${story.user.username}</div>
+    </div>
     `;
 };
 

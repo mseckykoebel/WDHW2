@@ -23,6 +23,8 @@ h5 {
   left: 0;
   margin: auto;
   width: 100%;
+  /* on top */
+  z-index: 2;
 }
 
 nav div {
@@ -95,11 +97,12 @@ nav div ul li a:hover {
 
 .stories-cards-container {
   flex-basis: 60%;
+  width: 60%;
   height: auto;
   background: white;
   padding: 20px;
   border-radius: 5px;
-  z-index: -1;
+  z-index: 1;
 }
 
 .recommendations-container {
@@ -117,14 +120,25 @@ nav div ul li a:hover {
 /* Styling stories */
 /* Styling stories */
 /* Styling stories */
+.stories-section-container {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  width: 100%;
+  /* Same height as the stories from the top of the stories card container */
+  margin-bottom: 20px;
+}
+
+/* Hide scrollbar, keep the function of it */
+.stories-section-container::-webkit-scrollbar {
+  display: none;
+}
+
 .stories-container {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 5rem;
-  overflow: auto;
-  grid-gap: 1rem;
-  /* Same height as the stories from the top of the stories card container */
-  margin-bottom: 20px;
+  grid-gap: 0.2rem;
+  /* hide overflow */
 }
 
 .stories-container-content {
@@ -135,18 +149,12 @@ nav div ul li a:hover {
   position: relative;
   cursor: pointer;
   user-select: none;
-  /* zoom in transition */
-  transition: all 200ms ease-in;
-}
-
-.stories-container-content:hover {
-  transform: scale(1.02);
 }
 
 .image-container {
   display: inline-block;
-  width: 5rem;
-  height: 5rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
   background: radial-gradient(rgba(0, 0, 0, 0.15) 60%, transparent 0),
     radial-gradient(white 65%, transparent 0),
@@ -154,7 +162,7 @@ nav div ul li a:hover {
 }
 
 .story-username-container {
-  font-size: small;
+  font-size: x-small;
 }
 
 .profile-image {
@@ -218,7 +226,7 @@ nav div ul li a:hover {
 .recommendations-container {
   display: grid;
   grid-auto-flow: row;
-  grid-auto-rows: 4.4rem;
+  grid-auto-rows: 4rem;
   grid-gap: 0rem;
   align-items: center;
 }
