@@ -121,6 +121,7 @@ nav div ul li a:hover {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 5rem;
+  overflow: auto;
   grid-gap: 1rem;
   /* Same height as the stories from the top of the stories card container */
   margin-bottom: 20px;
@@ -128,7 +129,7 @@ nav div ul li a:hover {
 
 .stories-container-content {
   display: grid;
-  grid-gap: 0.5rem;
+  grid-gap: 0.2rem;
   margin: 0px;
   text-align: center;
   position: relative;
@@ -264,7 +265,19 @@ nav div ul li a:hover {
 .recommendations-follow-button {
   background-color: rgb(255, 255, 255);
   border: 1px solid rgb(218, 179, 255);
-  padding: 8px 16px;
+  margin-left: 5px;
+  width: 70px;
+  height: 30px;
+  border-radius: 5%;
+  cursor: pointer;
+}
+
+.recommendations-unfollow-button {
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(218, 179, 255);
+  margin-left: 5px;
+  width: 70px;
+  height: 30px;
   border-radius: 5%;
   cursor: pointer;
 }

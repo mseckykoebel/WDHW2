@@ -15,17 +15,21 @@ const story2Html = (story) => {
 
 // fetch data from your API endpoint:
 const displayStories = () => {
-  fetch("/api/stories")
+  fetch("https://photo-app-demo-web-dev.herokuapp.com/api/stories")
     .then((response) => response.json())
     .then((stories) => {
       const html = stories.map(story2Html).join("\n");
       document.querySelector(".stories-container").innerHTML = html;
+    })
+    .catch((err) => {
+      // shitty, make better later
+      console.log(err);
     });
 };
 
-const initPage = () => {
+const initStories = () => {
   displayStories();
 };
 
 // invoke init page to display stories:
-initPage();
+initStories();
