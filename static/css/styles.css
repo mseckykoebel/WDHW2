@@ -220,7 +220,7 @@ nav div ul li a:hover {
   color: rgb(90, 90, 90);
   font-weight: 500;
   font-size: larger;
-  margin-bottom: -10px !important; /* Shitty, but need the margin here to be smaller */
+  margin-bottom: -20px !important; /* Shitty, but need the margin here to be smaller */
 }
 
 .recommendations-container {
@@ -401,6 +401,15 @@ nav div ul li a:hover {
   justify-content: space-around;
   align-items: center;
   margin-bottom: 0.5rem;
+}
+
+/* heart icon */
+.heart-icon {
+  content: url("https://cdn-icons-png.flaticon.com/128/1077/1077035.png");
+}
+
+.heart-icon-filled {
+  content: url("https://cdn-icons-png.flaticon.com/128/2107/2107845.png");
 }
 
 .icon {
