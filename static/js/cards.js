@@ -251,7 +251,7 @@ const commentTemplate = (comment) => {
  * @param {*} post - post JSON
  * @returns {HTMLElement} - a collection of commentTemplates with all of the comment information
  */
-const commentsTemplate = (postComments) => {
+const commentsTemplate = (postComments, postId) => {
   // if there are no comments
   if (postComments == undefined) {
     console.log("Comment is undefined");
@@ -263,7 +263,7 @@ const commentsTemplate = (postComments) => {
   if (postComments != undefined && postComments.length > 1) {
     // case where there are a lot of comments
     return `
-      <div id="comment_section">
+      <div id="comment_section_${postId}">
         ${html}
         <!-- Button for commenting-->
         <a class="load-more" href="#"
@@ -275,7 +275,7 @@ const commentsTemplate = (postComments) => {
     // case where there is exactly one comment
   } else if (postComments != undefined && postComments.length == 1) {
     return `
-      <div id="comment_section">
+      <div id="comment_section_${postId}">
         <p class="comment">
           ${html}
         </p>
@@ -313,7 +313,7 @@ const postComment = async (value, postId, postUsername) => {
     const commentData = await getComments(postId);
     console.log("COMMENT DATA: ", commentData);
     // updating the comment template
-    document.getElementById("comment_section").innerHTML =
+    document.getElementById(`comment_section_${postId}`).innerHTML =
       commentsTemplate(commentData);
     // set the input back to something empty (do not do this if the comment fails to send for some reason)
     document.getElementById(`comment_${postId}`).value = "";
@@ -352,7 +352,7 @@ const cardsToHtml = (post, bookmarks) => {
     .getAttribute("data-user-id");
   const heartImage = likeImageTemplate(post, profile);
   const bookmarkImage = bookmarkTemplate(post.id, profile, bookmarks);
-  const comments = commentsTemplate(post.comments);
+  const comments = commentsTemplate(post.comments, post.id);
   //
   return `
   <div class="post">
