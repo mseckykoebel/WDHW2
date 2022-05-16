@@ -251,36 +251,35 @@ const commentTemplate = (comment) => {
  * @param {*} post - post JSON
  * @returns {HTMLElement} - a collection of commentTemplates with all of the comment information
  */
-const commentsTemplate = (post) => {
+const commentsTemplate = (postComments) => {
   // if there are no comments
-  if (post.comments == undefined) {
+  if (postComments == undefined) {
     console.log("Comment is undefined");
     return ``;
   }
-  const comments = post.comments;
   // comment html
-  const html = comments.map(commentTemplate).join("\n");
+  const html = postComments.map(commentTemplate).join("\n");
   // if else on the number of comments
-  if (comments != undefined && comments.length > 1) {
+  if (postComments != undefined && postComments.length > 1) {
     // case where there are a lot of comments
     return `
       <div id="comment_section">
         ${html}
         <!-- Button for commenting-->
         <a class="load-more" href="#"
-          >Load ${post.comments.length - 1} more</a
+          >Load ${postComments.length - 1} more</a
         >
-        <p class="post-time">${post.display_time}</p>
+        <p class="post-time">${postComments.display_time}</p>
       </div>
       `;
     // case where there is exactly one comment
-  } else if (comments != undefined && comments.length == 1) {
+  } else if (postComments != undefined && postComments.length == 1) {
     return `
       <div id="comment_section">
         <p class="comment">
           ${html}
         </p>
-        <p class="post-time">${post.display_time}</p>
+        <p class="post-time">${postComments.display_time}</p>
       </div>
       `;
   } else {
@@ -290,18 +289,71 @@ const commentsTemplate = (post) => {
 };
 
 /**
+ *
+ * @param {string} value - comment to be left on the post
+ * @param {number} postId - the post ID of the comment being left
+ */
+const postComment = async (value, postId, postUsername) => {
+  const postData = {
+    post_id: postId,
+    text: value,
+  };
+  // post the new comment
+  try {
+    const response = await fetch("/api/comments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(postData),
+    });
+    // get tj
+    const data = await response.json();
+    // re-set the comment area with the new comment information
+    const commentData = await getComments(postId);
+    console.log("COMMENT DATA: ", commentData);
+    // updating the comment template
+    document.getElementById("comment_section").innerHTML =
+      commentsTemplate(commentData);
+    // set the input back to something empty (do not do this if the comment fails to send for some reason)
+    document.getElementById(`comment_${postId}`).value = "";
+  } catch (err) {
+    console.log("There was an error posting this comment: ", err);
+  }
+};
+
+/**
+ *
+ * @param {*} ev - click event
+ * @param {*} post - post JSON
+ * @returns {void} - console log for now
+ */
+const toggleComment = (ev, postId, postUsername) => {
+  console.log(postId);
+  // const event = ev.currentTarget;
+  // value of the comment box
+  const inputValue = document.getElementById(`comment_${postId}`).value;
+  if (inputValue.length > 0) {
+    console.log("something here!");
+    postComment(inputValue, postId, postUsername);
+  } else {
+    console.log("Please enter a comment...");
+  }
+};
+
+/**
  * Assume that the entire template is loaded before the "load X more" button is pressed
  * @param {*} post - post JSON for a single post
  * @returns {HTMLElement} - a HTML card element
  */
 const cardsToHtml = (post, bookmarks) => {
-  // get the userID of the user
   const profile = document
     .querySelector(".cards-container")
     .getAttribute("data-user-id");
   const heartImage = likeImageTemplate(post, profile);
   const bookmarkImage = bookmarkTemplate(post.id, profile, bookmarks);
-  const comments = commentsTemplate(post);
+  const comments = commentsTemplate(post.comments);
+  //
   return `
   <div class="post">
     <div class="info">
@@ -353,20 +405,21 @@ const cardsToHtml = (post, bookmarks) => {
           class="icon"
           alt="Smiling face for selecting an emoji to comment on this post"
         />
-        <label for="comment_{{posts[i].user.username}}" hidden
-          >Write out a comment of this post by {{posts[i].user.username}}</label
+        <label for="comment_${post.id}" hidden
+          >Write out a comment of this post by ${post.user.username}</label
         >
         <input
-          id="comment_{{posts[i].user.username}}"
+          id="comment_${post.id}"
           type="text"
           class="comment-box"
           placeholder="Add a comment..."
-          name="comment_{{posts[i].user.username}}"
+          name="comment_${post.id}"
         />
         <button
-          id="post_{{posts[i].user.username}}"
+          id="post_${post.id}"
           class="comment-btn"
-          name="post_{{posts[i].user.username}}"
+          name="post_${post.id}"
+          onclick="toggleComment(event, '${post.id}', '${post.user.username}')"
         >
           Post
         </button>
@@ -382,10 +435,11 @@ const cardsToHtml = (post, bookmarks) => {
  */
 const getCards = async () => {
   const bookmarks = await getBookmarks();
-  console.log(bookmarks);
+  console.log("bookmarks received");
   fetch("https://photo-app-demo-web-dev.herokuapp.com/api/posts")
     .then((response) => response.json())
     .then((posts) => {
+      console.log("List of posts: ", posts);
       const html = posts.map((post) => cardsToHtml(post, bookmarks)).join("\n");
       document.querySelector(".cards-container").innerHTML = html;
     })
@@ -423,6 +477,29 @@ const getBookmarks = async () => {
     },
   });
   return response.json();
+};
+
+/**
+ *
+ * @param {number} postId - get a list of comments from the postID
+ * @returns {*} - array of comments
+ */
+const getComments = async (postId) => {
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/api/posts/${postId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    return data.comments;
+  } catch (err) {
+    console.log(
+      `There was an issue fetching the comments for post ${postId}`,
+      err
+    );
+  }
 };
 
 const initCards = async () => {
