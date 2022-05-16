@@ -44,7 +44,7 @@ class BookmarksListEndpoint(Resource):
         bookmark = Bookmark.query.get(bookmark_id)
         if not bookmark:
             return Response(
-                json.dumps({"message": "invalid bookmark ID"}),
+                json.dumps({"message": "invalid bookmark ID!"}),
                 mimetype="application/json",
                 status=404,
             )
@@ -76,7 +76,7 @@ class BookmarksListEndpoint(Resource):
 
         except:
             return Response(
-                json.dumps({"message": "invalid bookmark ID"}),
+                json.dumps({"message": "invalid bookmark ID - failed to create new bookmarked record"}),
                 mimetype="application/json",
                 status=400,
             )

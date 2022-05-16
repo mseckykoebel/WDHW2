@@ -32,6 +32,12 @@ const toggleLike = (ev, postId, likeId) => {
   }
 };
 
+/**
+ *
+ * @param {HTMLElement} elem - like image element
+ * @param {string} postId - current post ID
+ * @returns {void} - increments the like, and posts a new like in the DB
+ */
 const createNewLike = async (elem, postId) => {
   console.log("liking");
   const likeData = {
@@ -50,10 +56,10 @@ const createNewLike = async (elem, postId) => {
   elem.classList.add("heart-icon-filled");
   elem.classList.remove("heart-icon");
   elem.setAttribute("data-like-id", data_1.id);
+  // count HTML updates
   const count =
     Number(document.querySelector(`.likes-${postId}`).innerHTML.split(" ")[0]) +
     1;
-  console.log("THIS IS THE COUNT", count);
   document.querySelector(`.likes-${postId}`).innerHTML =
     count == 1 ? count + " like" : count + " likes";
 };
@@ -73,6 +79,8 @@ const removeLike = (elem, postId, likeId) => {
       console.log(data);
       elem.classList.remove("heart-icon-filled");
       elem.classList.add("heart-icon");
+      elem.setAttribute("data-like-id", null);
+      // count HTML updates
       const count =
         Number(
           document.querySelector(`.likes-${postId}`).innerHTML.split(" ")[0]
@@ -81,17 +89,13 @@ const removeLike = (elem, postId, likeId) => {
       document.querySelector(`.likes-${postId}`).innerHTML =
         count == 1 ? count + " like" : count + " likes";
     });
-  elem.classList.remove("heart-icon-filled");
-  elem.classList.add("heart-icon");
-  elem.setAttribute("data-like-id", null);
-  console.log("unliking");
 };
 
 /**
  * @param {*} post - post object
  * @returns {HTMLElement} - an img element with the right class applied
  */
-const imageTemplate = (post, userId) => {
+const likeImageTemplate = (post, userId) => {
   // true if the current user likes this post
   const userLikes = post.likes.some((like) => like.user_id == userId);
   // guaranteed to be only one of these
@@ -126,6 +130,113 @@ const imageTemplate = (post, userId) => {
   }
 };
 
+/**
+ *
+ * @param {*} event - click event from clickng the bookmark icon
+ * @param {*} postId - postId event from clicking the post event
+ */
+const toggleBookmark = (event, postId) => {
+  console.log("bookmark pressed");
+  const elem = event.currentTarget;
+  if (elem.classList.contains("bookmark-icon")) {
+    createNewBookmark(elem, postId);
+  } else {
+    console.log("Remove this bookmark");
+    deleteBookmark(elem, elem.getAttribute("data-bookmark-id"));
+  }
+};
+
+/**
+ *
+ * @param {*} elem - click event from clicking the bookmark icon
+ * @param {*} postId - post ID of the current post we are bookmarking
+ */
+const createNewBookmark = async (elem, postId) => {
+  console.log(postId, "is the post ID");
+  const postData = {
+    post_id: postId,
+  };
+
+  try {
+    const response = await fetch("/api/bookmarks/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(postData),
+    });
+    const data = await response.json();
+    console.log("DATA! ", data);
+    elem.classList.add("bookmark-icon-filled");
+    elem.classList.remove("bookmark-icon");
+    elem.setAttribute("data-bookmark-id", data.id);
+  } catch (err) {
+    console.log("Error with bookmark creation: ", err);
+  }
+};
+
+/**
+ *
+ * @param {*} elem - click event from clicking the bookmark icon
+ * @param {*} postId - post ID of the current post we are bookmarking
+ * @param {*} bookmarkId - bookmark ID of the bookmark we are deleting
+ */
+const deleteBookmark = async (elem, bookmarkId) => {
+  console.log("bookmark ID being deleted: ", bookmarkId);
+  try {
+    await fetch(`http://127.0.0.1:5000/api/bookmarks/${bookmarkId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    elem.classList.remove("bookmark-icon-filled");
+    elem.classList.add("bookmark-icon");
+    elem.setAttribute("data-bookmark-id", null);
+  } catch (err) {
+    console.log("There was a problem with removing this bookmark: ", err);
+  }
+};
+
+/**
+ *
+ * @param {*} post - single post JSON
+ * @param {*} userId - userId for the currently logged in user (not the poster)
+ */
+const bookmarkTemplate = (postId, userId, bookmarks) => {
+  const bookmarkStatus = getBookmark(postId, userId, bookmarks);
+  // case where we have bookmarked this
+  if (!bookmarkStatus) {
+    // case where we have not bookmarked this
+    return `
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/25/25667.png"
+        id="bookmark-${postId}"
+        data-bookmark-id=${bookmarkStatus}
+        class="save icon bookmark-icon"
+        alt="Bookmark icon - select this to bookmark this post"
+        onclick="toggleBookmark(event, ${postId})"
+      />
+    `;
+  } else {
+    return `
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/102/102279.png"
+        id="bookmark-${postId}"
+        data-bookmark-id=${bookmarkStatus}
+        class="save icon bookmark-icon-filled"
+        alt="Bookmark icon filled - select this to remove this item from your bookmarks"
+        onclick="toggleBookmark(event, ${postId})"
+      />
+    `;
+  }
+};
+
+/**
+ *
+ * @param {*} comment - comment information JSON
+ * @returns {HTMLElement} - a comment element
+ */
 const commentTemplate = (comment) => {
   return `
       <p class="comment">
@@ -135,6 +246,11 @@ const commentTemplate = (comment) => {
     `;
 };
 
+/**
+ *
+ * @param {*} post - post JSON
+ * @returns {HTMLElement} - a collection of commentTemplates with all of the comment information
+ */
 const commentsTemplate = (post) => {
   // if there are no comments
   if (post.comments == undefined) {
@@ -173,12 +289,18 @@ const commentsTemplate = (post) => {
   }
 };
 
-// assuming that the entire template is loaded before the "Load X more" button is pressed
-const cardsToHtml = (post) => {
+/**
+ * Assume that the entire template is loaded before the "load X more" button is pressed
+ * @param {*} post - post JSON for a single post
+ * @returns {HTMLElement} - a HTML card element
+ */
+const cardsToHtml = (post, bookmarks) => {
+  // get the userID of the user
   const profile = document
     .querySelector(".cards-container")
     .getAttribute("data-user-id");
-  const heartImage = imageTemplate(post, profile);
+  const heartImage = likeImageTemplate(post, profile);
+  const bookmarkImage = bookmarkTemplate(post.id, profile, bookmarks);
   const comments = commentsTemplate(post);
   return `
   <div class="post">
@@ -217,11 +339,7 @@ const cardsToHtml = (post) => {
           class="icon"
           alt="Share icon - select this to select from a menu to share this post to others"
         />
-        <img
-          src="https://img.icons8.com/ios/344/bookmark-ribbon--v1.png"
-          class="save icon"
-          alt="Save icon - select this to save this post to your bookmarks"
-        />
+        ${bookmarkImage}
       </div>
       <p class="likes data-like-count=${post.likes.length} likes-${post.id}">${post.likes.length} likes</p>
       <p class="description">
@@ -258,12 +376,17 @@ const cardsToHtml = (post) => {
     `;
 };
 
-const getCards = () => {
+/**
+ *
+ * @returns {HTMLElement} - render all of the available cards
+ */
+const getCards = async () => {
+  const bookmarks = await getBookmarks();
+  console.log(bookmarks);
   fetch("https://photo-app-demo-web-dev.herokuapp.com/api/posts")
     .then((response) => response.json())
     .then((posts) => {
-      console.log("Posts: ", posts);
-      const html = posts.map(cardsToHtml).join("\n");
+      const html = posts.map((post) => cardsToHtml(post, bookmarks)).join("\n");
       document.querySelector(".cards-container").innerHTML = html;
     })
     .catch((err) => {
@@ -272,7 +395,37 @@ const getCards = () => {
     });
 };
 
-const initCards = () => {
+/**
+ *
+ * @param {string} userId - userid for a current post
+ * @param {string} postId - postId for a current post
+ * @returns {*} - JSON body for matching bookmark if found, or null if not found
+ */
+const getBookmark = (postId, userId, bookmarks) => {
+  const bookmark = bookmarks.find(
+    (bookmark) => bookmark.post.id == postId && bookmark.post.user.id == userId
+  );
+  if (bookmark == undefined) {
+    return null;
+  }
+  return bookmark;
+};
+
+/**
+ *
+ * @returns {*} - a JSON list of the bookmarks we have
+ */
+const getBookmarks = async () => {
+  const response = await fetch("http://127.0.0.1:5000/api/bookmarks/", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.json();
+};
+
+const initCards = async () => {
   getCards();
 };
 
