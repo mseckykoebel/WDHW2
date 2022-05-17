@@ -1,19 +1,19 @@
 /**
  * @returns {object} promise - a user object
  */
-const getProfile = () => {
-  const profile = fetch("http://127.0.0.1:5000/api/profile/", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .catch((err) => {
-      console.log("Profile not fetched - error", err);
+const getProfile = async () => {
+  try {
+    const response = await fetch("http://127.0.0.1:5000/api/profile/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
-
-  return profile;
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 /**
@@ -64,31 +64,39 @@ const createNewLike = async (elem, postId) => {
     count == 1 ? count + " like" : count + " likes";
 };
 
-const removeLike = (elem, postId, likeId) => {
+/**
+ *
+ * @param {*} elem - heart element
+ * @param {string} postId - postID
+ * @param {string} likeId - likeID string
+ * @returns {void} - decrement the like count
+ */
+const removeLike = async (elem, postId, likeId) => {
   console.log("unliking");
   console.log("likeID: ", likeId);
   // post a new like
-  fetch(`/api/posts/likes/${likeId}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      elem.classList.remove("heart-icon-filled");
-      elem.classList.add("heart-icon");
-      elem.setAttribute("data-like-id", null);
-      // count HTML updates
-      const count =
-        Number(
-          document.querySelector(`.likes-${postId}`).innerHTML.split(" ")[0]
-        ) - 1;
-      console.log("THIS IS THE COUNT", count);
-      document.querySelector(`.likes-${postId}`).innerHTML =
-        count == 1 ? count + " like" : count + " likes";
+  try {
+    await fetch(`/api/posts/likes/${likeId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
+    // const data = await response.json();
+    elem.classList.remove("heart-icon-filled");
+    elem.classList.add("heart-icon");
+    elem.setAttribute("data-like-id", null);
+    // count HTML updates
+    const count =
+      Number(
+        document.querySelector(`.likes-${postId}`).innerHTML.split(" ")[0]
+      ) - 1;
+    console.log("THIS IS THE COUNT", count);
+    document.querySelector(`.likes-${postId}`).innerHTML =
+      count == 1 ? count + " like" : count + " likes";
+  } catch (err) {
+    console.log("Failed to remove like: ", err);
+  }
 };
 
 /**
@@ -232,6 +240,10 @@ const bookmarkTemplate = (postId, userId, bookmarks) => {
   }
 };
 
+const launchModal = () => {
+  console.log("This is the modal!");
+};
+
 /**
  *
  * @param {*} comment - comment information JSON
@@ -251,39 +263,56 @@ const commentTemplate = (comment) => {
  * @param {*} post - post JSON
  * @returns {HTMLElement} - a collection of commentTemplates with all of the comment information
  */
-const commentsTemplate = (postComments, postId) => {
+const commentsTemplate = (postComments, postId, postDisplayTime) => {
   // if there are no comments
+  console.log("DISPLAY TIME: ", postDisplayTime);
   if (postComments == undefined) {
     console.log("Comment is undefined");
     return ``;
   }
-  // comment html
-  const html = postComments.map(commentTemplate).join("\n");
+  // comment html (get the first four)
+  let html;
   // if else on the number of comments
-  if (postComments != undefined && postComments.length > 1) {
-    // case where there are a lot of comments
+  if (
+    postComments != undefined &&
+    postComments.length > 1 &&
+    postComments.length < 4
+  ) {
+    // case where there are a few, but not a ton of comments (less than four)
+    html = postComments.map(commentTemplate).join("\n");
     return `
       <div id="comment_section_${postId}">
         ${html}
-        <!-- Button for commenting-->
-        <a class="load-more" href="#"
-          >Load ${postComments.length - 1} more</a
-        >
-        <p class="post-time">${postComments.display_time}</p>
+        <p class="post-time-${postComments.id}">${postDisplayTime}</p>
       </div>
       `;
     // case where there is exactly one comment
   } else if (postComments != undefined && postComments.length == 1) {
+    html = postComments.map(commentTemplate).join("\n");
     return `
       <div id="comment_section_${postId}">
         <p class="comment">
           ${html}
         </p>
-        <p class="post-time">${postComments.display_time}</p>
+        <p class="post-time-${postComments.id}">${postDisplayTime}</p>
+      </div>
+      `;
+  } else if (postComments != undefined && postComments.length > 3) {
+    // case where there are no comments
+    const slicedHTML = postComments.slice(0, 4);
+    console.log("SLICED HTML: ", slicedHTML)
+    html = slicedHTML.map(commentTemplate).join("\n");
+    return `
+      <div id="comment_section_${postId}">
+        ${html}
+        <!-- Button for commenting-->
+        <a class="load-more" onclick="launchModal()"
+          >Load ${postComments.length - slicedHTML.length} more</a
+        >
+        <p class="post-time-${postComments.id}">${postDisplayTime}</p>
       </div>
       `;
   } else {
-    // case where there are no comments
     return ``;
   }
 };
@@ -293,7 +322,7 @@ const commentsTemplate = (postComments, postId) => {
  * @param {string} value - comment to be left on the post
  * @param {number} postId - the post ID of the comment being left
  */
-const postComment = async (value, postId, postUsername) => {
+const postComment = async (value, postId, postDisplayTime) => {
   const postData = {
     post_id: postId,
     text: value,
@@ -314,7 +343,7 @@ const postComment = async (value, postId, postUsername) => {
     console.log("COMMENT DATA: ", commentData);
     // updating the comment template
     document.getElementById(`comment_section_${postId}`).innerHTML =
-      commentsTemplate(commentData);
+      commentsTemplate(commentData, postId, postDisplayTime);
     // set the input back to something empty (do not do this if the comment fails to send for some reason)
     document.getElementById(`comment_${postId}`).value = "";
   } catch (err) {
@@ -328,14 +357,13 @@ const postComment = async (value, postId, postUsername) => {
  * @param {*} post - post JSON
  * @returns {void} - console log for now
  */
-const toggleComment = (ev, postId, postUsername) => {
-  console.log(postId);
+const toggleComment = (ev, postId, postDisplayTime) => {
   // const event = ev.currentTarget;
   // value of the comment box
   const inputValue = document.getElementById(`comment_${postId}`).value;
   if (inputValue.length > 0) {
     console.log("something here!");
-    postComment(inputValue, postId, postUsername);
+    postComment(inputValue, postId, postDisplayTime);
   } else {
     console.log("Please enter a comment...");
   }
@@ -352,7 +380,7 @@ const cardsToHtml = (post, bookmarks) => {
     .getAttribute("data-user-id");
   const heartImage = likeImageTemplate(post, profile);
   const bookmarkImage = bookmarkTemplate(post.id, profile, bookmarks);
-  const comments = commentsTemplate(post.comments, post.id);
+  const comments = commentsTemplate(post.comments, post.id, post.display_time);
   //
   return `
   <div class="post">
@@ -419,7 +447,7 @@ const cardsToHtml = (post, bookmarks) => {
           id="post_${post.id}"
           class="comment-btn"
           name="post_${post.id}"
-          onclick="toggleComment(event, '${post.id}', '${post.user.username}')"
+          onclick="toggleComment(event, '${post.id}', '${post.display_time}')"
         >
           Post
         </button>
@@ -436,17 +464,14 @@ const cardsToHtml = (post, bookmarks) => {
 const getCards = async () => {
   const bookmarks = await getBookmarks();
   console.log("bookmarks received");
-  fetch("https://photo-app-demo-web-dev.herokuapp.com/api/posts")
-    .then((response) => response.json())
-    .then((posts) => {
-      console.log("List of posts: ", posts);
-      const html = posts.map((post) => cardsToHtml(post, bookmarks)).join("\n");
-      document.querySelector(".cards-container").innerHTML = html;
-    })
-    .catch((err) => {
-      // shitty, make better later
-      console.log(err);
-    });
+  try {
+    const response = await fetch("/api/posts");
+    const posts = await response.json();
+    const html = posts.map((post) => cardsToHtml(post, bookmarks)).join("\n");
+    document.querySelector(".cards-container").innerHTML = html;
+  } catch (err) {
+    console.log("Failed to fetch posts: ", err);
+  }
 };
 
 /**
