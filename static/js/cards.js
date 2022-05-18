@@ -240,9 +240,25 @@ const bookmarkTemplate = (postId, userId, bookmarks) => {
   }
 };
 
+/**
+ * Open the modal (does not handle closing the modal)
+ * @param {Event} ev - click event for closing the modal
+ * @returns {void}
+ */
 const launchModal = () => {
-  console.log("This is the modal!");
+  document.querySelector(".modal").style.display = "block";
+  // disable pointer events
+  document.querySelector(".container").classList.add("hide-overflow");
 };
+
+/**
+ * 
+ * @param {Event} ev - click event for closing the modal
+ */
+const closeModal = () => {
+  document.querySelector(".modal").style.display = "none";
+  document.querySelector(".container").classList.remove("hide-overflow");
+}
 
 /**
  *
@@ -265,7 +281,6 @@ const commentTemplate = (comment) => {
  */
 const commentsTemplate = (postComments, postId, postDisplayTime) => {
   // if there are no comments
-  console.log("DISPLAY TIME: ", postDisplayTime);
   if (postComments == undefined) {
     console.log("Comment is undefined");
     return ``;
@@ -302,18 +317,17 @@ const commentsTemplate = (postComments, postId, postDisplayTime) => {
     const slicedHTML = postComments.slice(0, 4);
     html = slicedHTML.map(commentTemplate).join("\n");
     const modifiedLength = postComments.length - slicedHTML.length;
-    console.log("modifiedLength: ", modifiedLength);
+    // console.log("modifiedLength: ", modifiedLength);
     return `
       <div id="comment_section_${postId}">
         ${html}
         <!-- Button for commenting-->
-        ${
-          modifiedLength != 0
-            ? `<a class="load-more" onclick="launchModal()"
+        ${modifiedLength != 0
+        ? `<a class="load-more" onclick="launchModal()"
                   >Load ${modifiedLength} more</a
               >`
-            : ``
-        }
+        : ``
+      }
         <p class="post-time-${postComments.id}">${postDisplayTime}</p>
       </div>
       `;
@@ -345,7 +359,7 @@ const postComment = async (value, postId, postDisplayTime) => {
     const data = await response.json();
     // re-set the comment area with the new comment information
     const commentData = await getComments(postId);
-    console.log("COMMENT DATA: ", commentData);
+    // console.log("COMMENT DATA: ", commentData);
     // updating the comment template
     document.getElementById(`comment_section_${postId}`).innerHTML =
       commentsTemplate(commentData, postId, postDisplayTime);
