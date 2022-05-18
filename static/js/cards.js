@@ -300,15 +300,20 @@ const commentsTemplate = (postComments, postId, postDisplayTime) => {
   } else if (postComments != undefined && postComments.length > 3) {
     // case where there are no comments
     const slicedHTML = postComments.slice(0, 4);
-    console.log("SLICED HTML: ", slicedHTML)
     html = slicedHTML.map(commentTemplate).join("\n");
+    const modifiedLength = postComments.length - slicedHTML.length;
+    console.log("modifiedLength: ", modifiedLength);
     return `
       <div id="comment_section_${postId}">
         ${html}
         <!-- Button for commenting-->
-        <a class="load-more" onclick="launchModal()"
-          >Load ${postComments.length - slicedHTML.length} more</a
-        >
+        ${
+          modifiedLength != 0
+            ? `<a class="load-more" onclick="launchModal()"
+                  >Load ${modifiedLength} more</a
+              >`
+            : ``
+        }
         <p class="post-time-${postComments.id}">${postDisplayTime}</p>
       </div>
       `;
