@@ -303,7 +303,7 @@ const commentsTemplate = (postComments, postId, postDisplayTime) => {
         ${html}
         <!-- Button for commenting-->
         ${modifiedLength != 0
-        ? `<a class="load-more" onclick="launchModal()"
+        ? `<a class="load-more" onclick="launchModal('${postId}')"
                   >Load ${modifiedLength} more</a
               >`
         : ``

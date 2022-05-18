@@ -1,43 +1,69 @@
 /**
  * Open the modal (does not handle closing the modal)
- * @param {Event} ev - click event for closing the modal
+ * @param {string} postId - the post ID for the post that we want to view
  * @returns {void}
  */
-const launchModal = () => {
+const launchModal = async (postId) => {
+    const postData = await getPost(postId);
+    document.querySelector("#post-image").setAttribute("src", postData.image_url);
+    document.querySelector("#post-image").setAttribute("alt", `Image that ${postData.username} posted`);
     document.querySelector(".modal").style.display = "block";
     // disable pointer events
     document.querySelector(".container").classList.add("hide-overflow");
 };
 
 /**
- * 
+ *
  * @param {Event} ev - click event for closing the modal
  */
 const closeModal = () => {
     document.querySelector(".modal").style.display = "none";
     document.querySelector(".container").classList.remove("hide-overflow");
-}
+};
 
-const initModal = () => {
+const initModal = async () => {
     // drop the element into the DOM (initially not visible)
-    document.querySelector(".modal").outerHTML =
-        `
+    document.querySelector(".modal").outerHTML = `
     <div class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <span class="close" onclick="closeModal(event)">&times;</span>
-                <h2>Modal Header</h2>
+            <!-- post body end -->
+            <div class="modal-left">
+                <img
+                class="modal-post-image"
+                id="post-image"
+                src=""
+                class="post-image"
+                alt=""
+                />
             </div>
-                <div class="modal-body">
-                <p>Some text in the Modal Body</p>
-            <p>Some other text...</p>
-            </div>
-                <div class="modal-footer">
-                <h3>Modal Footer</h3>
+            <!-- close and comment end -->
+            <div class="modal-right">
+                <!-- close area -->
+                <div class="modal-header">
+                    <span class="close" onclick="closeModal(event)">&times;</span>
+                </div>
+                <!-- comment area -->
+                <div>
+                
+                </div>
             </div>
         </div>
     </div>
-    `
+    `;
+};
+
+/**
+ * 
+ * @param {string} postId - the postId for the post content that we want to display
+ * @returns {*}
+ */
+const getPost = async (postId) => {
+    try {
+        const response = await fetch(`api/posts/${postId}`);
+        return await response.json();
+    } catch (err) {
+        console.log(`There was an issue fetching post ${postId}`, err);
+    }
 };
 
 // invoke init page to display stories:
