@@ -190,6 +190,7 @@ const createNewBookmark = async (elem, postId) => {
  * @param {*} bookmarkId - bookmark ID of the bookmark we are deleting
  */
 const deleteBookmark = async (elem, bookmarkId) => {
+  console.log(bookmarkId, "<- BOOKMARK ID");
   console.log("bookmark ID being deleted: ", bookmarkId);
   try {
     await fetch(`http://127.0.0.1:5000/api/bookmarks/${bookmarkId}`, {
@@ -220,7 +221,6 @@ const bookmarkTemplate = (postId, userId, bookmarks) => {
       <img
         src="https://cdn-icons-png.flaticon.com/512/25/25667.png"
         id="bookmark-${postId}"
-        data-bookmark-id=${bookmarkStatus}
         class="save icon bookmark-icon"
         alt="Bookmark icon - select this to bookmark this post"
         onclick="toggleBookmark(event, ${postId})"
@@ -231,7 +231,7 @@ const bookmarkTemplate = (postId, userId, bookmarks) => {
       <img
         src="https://cdn-icons-png.flaticon.com/512/102/102279.png"
         id="bookmark-${postId}"
-        data-bookmark-id=${bookmarkStatus}
+        data-bookmark-id=${bookmarkStatus.id}
         class="save icon bookmark-icon-filled"
         alt="Bookmark icon filled - select this to remove this item from your bookmarks"
         onclick="toggleBookmark(event, ${postId})"
@@ -480,9 +480,12 @@ const getCards = async () => {
  * @returns {*} - JSON body for matching bookmark if found, or null if not found
  */
 const getBookmark = (postId, userId, bookmarks) => {
+  console.log("POST ID: ", postId)
+  console.log("Bookmarks:", bookmarks);
   const bookmark = bookmarks.find(
-    (bookmark) => bookmark.post.id == postId && bookmark.post.user.id == userId
+    (bookmark) => bookmark.post.id == postId
   );
+  console.log("Bookmark that was pulled: ", bookmark)
   if (bookmark == undefined) {
     return null;
   }

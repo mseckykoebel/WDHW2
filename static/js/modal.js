@@ -5,10 +5,15 @@
  */
 const launchModal = async (postId) => {
     const postData = await getPost(postId);
+    // set the image
     document.querySelector("#post-image").setAttribute("src", postData.image_url);
-    document.querySelector("#post-image").setAttribute("alt", `Image that ${postData.username} posted`);
+    document.querySelector("#post-image").setAttribute("alt", `Image that ${postData.user.username} posted`);
+    // set the comments
+    for (i = 0; i < postData.comments.length; i++) {
+        console.log(postData.comments[i]);
+    }
+    // put the modal in view
     document.querySelector(".modal").style.display = "block";
-    // disable pointer events
     document.querySelector(".container").classList.add("hide-overflow");
 };
 
