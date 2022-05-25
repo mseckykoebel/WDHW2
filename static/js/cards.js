@@ -56,6 +56,8 @@ const createNewLike = async (elem, postId) => {
   elem.classList.add("heart-icon-filled");
   elem.classList.remove("heart-icon");
   elem.setAttribute("data-like-id", data_1.id);
+  elem.setAttribute("aria-checked", "true");
+  elem.setAttribute("aria-label", "like");
   // count HTML updates
   const count =
     Number(document.querySelector(`.likes-${postId}`).innerHTML.split(" ")[0]) +
@@ -86,6 +88,8 @@ const removeLike = async (elem, postId, likeId) => {
     elem.classList.remove("heart-icon-filled");
     elem.classList.add("heart-icon");
     elem.setAttribute("data-like-id", null);
+    elem.setAttribute("aria-checked", "false");
+    elem.setAttribute("aria-label", "unlike");
     // count HTML updates
     const count =
       Number(
@@ -178,6 +182,8 @@ const createNewBookmark = async (elem, postId) => {
     elem.classList.add("bookmark-icon-filled");
     elem.classList.remove("bookmark-icon");
     elem.setAttribute("data-bookmark-id", data.id);
+    elem.setAttribute("aria-checked", "true");
+    elem.setAttribute("aria-label", "bookmarked");
   } catch (err) {
     console.log("Error with bookmark creation: ", err);
   }
@@ -201,6 +207,8 @@ const deleteBookmark = async (elem, bookmarkId) => {
     });
     elem.classList.remove("bookmark-icon-filled");
     elem.classList.add("bookmark-icon");
+    elem.setAttribute("aria-checked", "true");
+    elem.setAttribute("aria-label", "un-bookmarked");
     elem.setAttribute("data-bookmark-id", null);
   } catch (err) {
     console.log("There was a problem with removing this bookmark: ", err);
@@ -222,6 +230,8 @@ const bookmarkTemplate = (postId, userId, bookmarks) => {
         src="https://cdn-icons-png.flaticon.com/512/25/25667.png"
         id="bookmark-${postId}"
         class="save icon bookmark-icon"
+        aria-checked="false"
+        aria-label="unbookmarked"
         alt="Bookmark icon - select this to bookmark this post"
         onclick="toggleBookmark(event, ${postId})"
       />
@@ -232,6 +242,8 @@ const bookmarkTemplate = (postId, userId, bookmarks) => {
         src="https://cdn-icons-png.flaticon.com/512/102/102279.png"
         id="bookmark-${postId}"
         data-bookmark-id=${bookmarkStatus.id}
+        aria-checked="true"
+        aria-label="bookmarked"
         class="save icon bookmark-icon-filled"
         alt="Bookmark icon filled - select this to remove this item from your bookmarks"
         onclick="toggleBookmark(event, ${postId})"
