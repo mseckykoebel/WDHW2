@@ -4,6 +4,7 @@ from models import Post, db, Following
 from views import get_authorized_user_ids
 
 import json
+import flask_jwt_extended
 
 
 def get_path():
@@ -14,6 +15,7 @@ class PostListEndpoint(Resource):
     def __init__(self, current_user):
         self.current_user = current_user
 
+    @flask_jwt_extended.jwt_required()  # require there to be a JWT to use this!
     def get(self):  # HTTP GET
         args = request.args
         print(args)
@@ -57,6 +59,7 @@ class PostListEndpoint(Resource):
         print(posts_json)
         return Response(json.dumps(posts_json), mimetype="application/json", status=200)
 
+    @flask_jwt_extended.jwt_required()
     def post(self):  # HTTP POST
         # create a new post based on the data posted in the body
         body = request.get_json()
@@ -82,7 +85,9 @@ class PostListEndpoint(Resource):
         db.session.commit()
 
         return Response(
-            json.dumps(new_post.to_dict(user=self.current_user)), mimetype="application/json", status=201
+            json.dumps(new_post.to_dict(user=self.current_user)),
+            mimetype="application/json",
+            status=201,
         )
 
 
@@ -91,6 +96,7 @@ class PostDetailEndpoint(Resource):
         self.current_user = current_user
 
     # update the post based on this
+    @flask_jwt_extended.jwt_required()
     def patch(self, id):
         # update post based on the data posted in the body
         body = request.get_json()
@@ -126,6 +132,7 @@ class PostDetailEndpoint(Resource):
             json.dumps(post.to_dict()), mimetype="application/json", status=200
         )
 
+    @flask_jwt_extended.jwt_required()
     def delete(self, id):
         # get the post from the db
         post = Post.query.get(id)
@@ -152,6 +159,7 @@ class PostDetailEndpoint(Resource):
             status=200,
         )
 
+    @flask_jwt_extended.jwt_required()
     def get(self, id):
         # get the post based on the id
         if not Post.query.get(id):
@@ -180,11 +188,11 @@ def initialize_routes(api):
         PostListEndpoint,
         "/api/posts",
         "/api/posts/",
-        resource_class_kwargs={"current_user": api.app.current_user},
+        resource_class_kwargs={"current_user": flask_jwt_extended.current_user},
     )
     api.add_resource(
         PostDetailEndpoint,
         "/api/posts/<int:id>",
         "/api/posts/<int:id>/",
-        resource_class_kwargs={"current_user": api.app.current_user},
+        resource_class_kwargs={"current_user": flask_jwt_extended.current_user},
     )
