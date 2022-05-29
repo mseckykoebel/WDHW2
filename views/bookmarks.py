@@ -96,19 +96,10 @@ class BookmarkDetailEndpoint(Resource):
 
     @flask_jwt_extended.jwt_required()
     def delete(self, id):
-        # check if the ID is invalid
-        if id > 999:
-            return Response(
-                json.dumps({"message": "id is invalid!"}),
-                mimetype="application/json",
-                status=404,
-            )
-
-        # see if we are authorized to edit this bookmark
+        # get the bookmark right away
         bookmark = Bookmark.query.get(id)
-        print(f"This is the bookmark: {bookmark}")
-        user_ids = get_authorized_user_ids(self.current_user.id)
-        if bookmark.user_id not in user_ids:
+        # do the validation checks
+        if not bookmark or bookmark.user_id != self.current_user.id:
             return Response(
                 json.dumps({"message": "id is invalid!"}),
                 mimetype="application/json",
