@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/home/mason/Documents/Google Drive School/SPRING 2022 🌻/Web dev 🕸️/hw02_03_04/venv/bin/python" "$0" "$@"
+'''exec' "/home/mason/Documents/Google Drive School/SPRING 2022 🌻/Web dev 🕸️/hw02_03_04_05/venv/bin/python3" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re

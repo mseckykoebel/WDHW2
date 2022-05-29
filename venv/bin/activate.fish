@@ -29,7 +29,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/mason/Documents/Google Drive School/SPRING 2022 🌻/Web dev 🕸️/hw02_03_04/venv"
+set -gx VIRTUAL_ENV "/home/mason/Documents/Google Drive School/SPRING 2022 🌻/Web dev 🕸️/hw02_03_04_05/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
