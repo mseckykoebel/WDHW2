@@ -90,9 +90,7 @@ class FollowingDetailEndpoint(Resource):
 
         # see if we are authorized to edit this bookmark
         following = Following.query.get(id)
-        print(f"This is the following thing: {following}")
         user_ids = get_authorized_user_ids(self.current_user)
-        print(user_ids)
         if following.following_id not in user_ids:
             return Response(
                 json.dumps({"message": "id is invalid!"}),
