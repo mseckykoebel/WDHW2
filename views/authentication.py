@@ -4,8 +4,11 @@ from models import User
 import flask_jwt_extended
 
 def logout():
+    # redirect to the login page
     response = make_response(redirect('/login', 302))
+    # un-set the cookie
     flask_jwt_extended.unset_jwt_cookies(response)
+    # return the response
     return response
 
 def login():

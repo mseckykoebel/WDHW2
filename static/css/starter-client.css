@@ -65,6 +65,8 @@ nav {
   left: 0px;
   top: 0px;
   padding: 0px 3vw;
+  /* make this sticky on top */
+  z-index: 2;
 }
 
 nav,
