@@ -5,11 +5,14 @@ from views import get_authorized_user_ids
 from random import sample
 import json
 
+import flask_jwt_extended
+
 
 class SuggestionsListEndpoint(Resource):
     def __init__(self, current_user):
         self.current_user = current_user
 
+    @flask_jwt_extended.jwt_required()
     def get(self):
         """
         Suggestions for seven users that we're not following.
@@ -31,5 +34,5 @@ def initialize_routes(api):
         SuggestionsListEndpoint,
         "/api/suggestions",
         "/api/suggestions/",
-        resource_class_kwargs={"current_user": api.app.current_user},
+        resource_class_kwargs={"current_user": flask_jwt_extended.current_user},
     )

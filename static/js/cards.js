@@ -1,3 +1,21 @@
+const getCookie = key => {
+  let name = key + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  console.log(decodedCookie);
+  let ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    console.log(c);
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+};
+
 /**
  * @returns {object} promise - a user object
  */
@@ -7,6 +25,7 @@ const getProfile = async () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        'X-CSRF-TOKEN': getCookie('csrf_access_token')
       },
     });
     const data = await response.json();
@@ -48,6 +67,7 @@ const createNewLike = async (elem, postId) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      'X-CSRF-TOKEN': getCookie('csrf_access_token')
     },
     body: JSON.stringify(likeData),
   });
@@ -82,6 +102,7 @@ const removeLike = async (elem, postId, likeId) => {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        'X-CSRF-TOKEN': getCookie('csrf_access_token')
       },
     });
     // const data = await response.json();
@@ -174,6 +195,7 @@ const createNewBookmark = async (elem, postId) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'X-CSRF-TOKEN': getCookie('csrf_access_token')
       },
       body: JSON.stringify(postData),
     });
@@ -203,6 +225,7 @@ const deleteBookmark = async (elem, bookmarkId) => {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        'X-CSRF-TOKEN': getCookie('csrf_access_token')
       },
     });
     elem.classList.remove("bookmark-icon-filled");
@@ -344,6 +367,7 @@ const postComment = async (value, postId, postDisplayTime) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'X-CSRF-TOKEN': getCookie('csrf_access_token')
       },
       body: JSON.stringify(postData),
     });
@@ -513,6 +537,7 @@ const getBookmarks = async () => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      'X-CSRF-TOKEN': getCookie('csrf_access_token')
     },
   });
   return response.json();
@@ -529,6 +554,7 @@ const getComments = async (postId) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        'X-CSRF-TOKEN': getCookie('csrf_access_token')
       },
     });
     const data = await response.json();

@@ -1,3 +1,21 @@
+const getCookie = key => {
+  let name = key + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  console.log(decodedCookie);
+  let ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    console.log(c);
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+};
+
 const toggleFollow = (event) => {
   const elem = event.currentTarget;
   elem.innerHTML === "follow"
@@ -14,6 +32,7 @@ const createNewFollower = (userId, elem) => {
     method: "POST",
     headers: {
       "Content-type": "application/json",
+      'X-CSRF-TOKEN': getCookie('csrf_access_token')
     },
     body: JSON.stringify(followerData),
   })
