@@ -1,3 +1,7 @@
+# HW06
+from flask_multistatic import MultiStaticFlask as Flask  # at the top
+from flask import send_from_directory  # at the top
+
 import datetime
 from dotenv import load_dotenv
 
@@ -12,7 +16,13 @@ from models import db, User, ApiNavigator
 from views import initialize_routes
 import decorators
 
+
 app = Flask(__name__)
+# place the following after: app = Flask(__name__)
+app.static_folder = [
+    os.path.join(app.root_path, "react-client", "build", "static"),
+    os.path.join(app.root_path, "static"),
+]
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DB_URL")
@@ -43,7 +53,7 @@ def user_lookup_callback(_jwt_header, jwt_data):
     # print('JWT data:', jwt_data)
     # https://flask-jwt-extended.readthedocs.io/en/stable/automatic_user_loading/
     user_id = jwt_data["sub"]
-    print('user_id =', user_id)
+    print("user_id =", user_id)
     return User.query.filter_by(id=user_id).one_or_none()
 
 
@@ -52,9 +62,10 @@ initialize_routes(api)
 
 # Server-side template for the homepage:
 @app.route("/")
-@decorators.jwt_or_login  # put this on top of the route that we want protected!
+@decorators.jwt_or_login
 def home():
-    return render_template("index.html", user=flask_jwt_extended.current_user)
+    # https://medium.com/swlh/how-to-deploy-a-react-python-flask-project-on-heroku-edb99309311
+    return send_from_directory(app.root_path + "/react-client/build", "index.html")
 
 
 @app.route("/api")
